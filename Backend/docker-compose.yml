@@ -15,6 +15,47 @@ services:
     networks:
       - service
 
+  user_api:
+    build: 
+      context: ./usersAPI
+      dockerfile: Dockerfile
+  container_name: user_api
+  ports:
+    - "3001:3001"
+  volumes:
+    - ./usersAPI/API:/usr/src/app
+  depends_on:
+    - mongo_api
+  networks:
+    - service 
+
+  event_api:
+    build: 
+      context: ./eventAPI
+      dockerfile: Dockerfile
+    container_name: event_api
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./eventAPI/API:/usr/src/app
+    depends_on:
+      - mongo_api
+    networks:
+      - service 
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_reverse_proxy
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user_api
+      - event_api
+    networks:
+      - service
+
 networks:
   service:
     driver: bridge

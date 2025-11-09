@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+:root{
+    --cream: #F5F0E8;
+    --latte: #E8DCC8;
+    --caramel: #D4A574;
+    --terracotta: #C9896B;
+    --coffee: #8B6F47;
+    --coffee-medium: #6B5444;
+    --coffee-dark: #5A4A3A;
+    --sage: #A8B5A0;
+    --clay-rose: #D4B5A8;
+    --white: #FFFFFF;
+    --sand: #EDE4D9;
+    --gray-coffee: #8B8577;
+    --placeholder: #B8A89A;
+    --sage-dark: #93A08B;
+    --terracotta-dark: #B87860;
+}
