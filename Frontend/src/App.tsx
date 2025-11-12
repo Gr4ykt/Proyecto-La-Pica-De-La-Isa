@@ -1,9 +1,13 @@
 import {BrowserRouter, Route, Routes} from 'react-router'
-import DebuggerPage from './pages/HelpDebugger.tsx'
-import HomePage from './pages/Home.tsx'
 import FooterComponent from './components/Footer'
 import HeaderComponent from './components/Header'
 
+import GaleryPage from './pages/Galery.tsx'
+import DebuggerPage from './pages/HelpDebugger.tsx'
+import HomePage from './pages/Home.tsx'
+import ContactPage from './pages/Contact.tsx'
+import LoginRegisterPage from './pages/LoginRegister.tsx'
+import ServicesPage from './pages/Services.tsx'
 
 function AppContent() {
 
@@ -13,8 +17,13 @@ function AppContent() {
       style={{ backgroundColor: 'var(--background)' }}>
       <HeaderComponent />
         <Routes>
+
           <Route path="/debug-page" element={<DebuggerPage />} />
           <Route path="/" element={< HomePage/>} />
+          <Route path="/galery" element={< GaleryPage/>} />
+          <Route path="/contact" element={< ContactPage/>} />
+          <Route path="/login" element={< LoginRegisterPage/>} />
+          <Route path="/services" element={< ServicesPage/>} />
 
           {/* Para usuarios Registrados (SOLO ACCESIBLES CON AUTENTICACION) */}
           

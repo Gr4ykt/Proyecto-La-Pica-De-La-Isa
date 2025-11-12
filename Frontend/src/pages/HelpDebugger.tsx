@@ -1,5 +1,3 @@
-import FooterComponent from '../components/Footer'
-
 function App() {
   return (
     <div 

@@ -12,14 +12,14 @@ export default function HeaderComponent() {
   return (
     <>
       <header 
-        className="border-b sticky top-0 z-50 transition-colors duration-300"
+        className="sticky top-0 z-50 transition-colors duration-300"
         style={{ 
           borderColor: 'var(--border)',
           backgroundColor: 'var(--background)'
         }}
       >
         {/* Top Bar - Logo o titulo */}
-        <div className="border-b p-4 sm:p-6" style={{ borderColor: 'var(--border)' }}>
+        <div className="border-b-2 p-4 sm:p-6" style={{ borderColor: 'var(--border)' }}>
           <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
             <h1 
               className="text-xl sm:text-2xl md:text-3xl font-bold"
@@ -71,7 +71,7 @@ export default function HeaderComponent() {
             <ul className="flex items-center gap-8 py-4">
               <li>
                 <a 
-                  href="#inicio"
+                  href="/"
                   className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
                   style={{ color: 'var(--link-default)' }}
                 >
@@ -80,7 +80,7 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#servicios"
+                  href="/services"
                   className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
                   style={{ color: 'var(--link-default)' }}
                 >
@@ -89,7 +89,7 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#galeria"
+                  href="/galery"
                   className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
                   style={{ color: 'var(--link-default)' }}
                 >
@@ -98,7 +98,7 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#contacto"
+                  href="/contact"
                   className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
                   style={{ color: 'var(--link-default)' }}
                 >
@@ -106,11 +106,13 @@ export default function HeaderComponent() {
                 </a>
               </li>
               <li className="ml-auto flex items-center gap-3">
+                <a href="/login">
                 <button 
                   className="btn-primary btn-sm"
                 >
                   Iniciar Sesión
                 </button>
+                </a>
               </li>
               <ThemeToggle />
             </ul>
@@ -167,7 +169,7 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#galeria"
+                  href="/galery"
                   onClick={() => setIsMenuOpen(false)}
                   className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
                   style={{ 
@@ -207,7 +209,7 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#contacto"
+                  href="/contact"
                   onClick={() => setIsMenuOpen(false)}
                   className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
                   style={{ 
