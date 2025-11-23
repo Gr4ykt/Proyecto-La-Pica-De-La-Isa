@@ -1,5 +1,10 @@
 import Event from "../models/event.models.js";
 
+export const hello = async (req, res) => {
+  res.status(200);
+  res.json({"message":"Hello World from EVENT API"});
+};
+
 export const getEventusers = async(req,res) =>{
     const eventuser = await Event.find({
         user: req.user.id,

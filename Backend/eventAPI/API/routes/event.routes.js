@@ -8,6 +8,7 @@ import {
   eventUpdateusers,
   deleteEventusers,
   createEventusers,
+  hello
 } from "../controllers/event.user.controller.js";
 
 
@@ -19,6 +20,8 @@ import {
 
 
 const router = Router();
+
+router.get('/hello', hello);
 
 router.get("/eventuse",            authRequired, getEventuser);
 router.get("/eventuse/:id",        authRequired, getEventusers);

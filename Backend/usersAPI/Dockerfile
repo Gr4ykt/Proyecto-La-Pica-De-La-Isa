@@ -23,4 +23,4 @@ EXPOSE 3001
 
 COPY ./API/wait-for-mongo.sh .
 RUN chmod +x wait-for-mongo.sh
-CMD ["./wait-for-mongo.sh"]
+CMD ["sh", "./wait-for-mongo.sh"]
