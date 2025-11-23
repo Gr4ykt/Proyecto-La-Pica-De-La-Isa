@@ -8,6 +8,7 @@ import HomePage from './pages/Home.tsx'
 import ContactPage from './pages/Contact.tsx'
 import LoginRegisterPage from './pages/LoginRegister.tsx'
 import ServicesPage from './pages/Services.tsx'
+import DashboardPage from './pages/Dashboard.tsx'
 
 function AppContent() {
 
@@ -26,7 +27,9 @@ function AppContent() {
           <Route path="/services" element={< ServicesPage/>} />
 
           {/* Para usuarios Registrados (SOLO ACCESIBLES CON AUTENTICACION) */}
-          
+          <Route path="/dashboard" element={<DashboardPage />}/>
+
+
         </Routes>
         <FooterComponent />
       </main>
