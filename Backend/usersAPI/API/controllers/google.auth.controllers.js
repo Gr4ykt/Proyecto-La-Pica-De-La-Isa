@@ -60,7 +60,7 @@ export const googleCallback = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000
     });
 
-    return res.redirect('/user/profile');
+    return res.redirect('/user/api/profile');
 
   } catch (error) {
     console.error('Error en Google Callback:', error);

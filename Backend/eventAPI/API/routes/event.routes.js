@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/auth.middlewares.js";
+import { isAdmin } from "../middlewares/auth.admin.middlewares.js";
 
 
 import {
@@ -21,18 +22,18 @@ import {
 
 const router = Router();
 
-router.get('/hello', hello);
+router.get('/hello', authRequired, isAdmin, hello);
 
-router.get("/eventuse",            authRequired, getEventuser);
-router.get("/eventuse/:id",        authRequired, getEventusers);
-router.put("/eventupdateuse/:id",  authRequired, eventUpdateusers);
+router.get("/eventuser", authRequired, getEventuser);
+router.get("/eventuser/:id", authRequired, getEventusers);
+router.put("/eventupdateuser/:id", authRequired, eventUpdateusers);
 router.delete("/deleteeventuser/:id", authRequired, deleteEventusers);
-router.post("/createeventuser/:id",   authRequired, createEventusers);
+router.post("/createeventuser/:id", authRequired, createEventusers);
 
-router.get("/getEvent",        authRequired, getEvent);
-router.get("/gerEvents",       authRequired, getEvents);
-router.put("/updateEvent/:id", authRequired, updateEvent);
-router.delete("/deleteEvent/:id", authRequired, deleteEvent);
+router.get("/getEvent", authRequired, isAdmin,getEvent);
+router.get("/gerEvents", authRequired, isAdmin, getEvents);
+router.put("/updateEvent/:id", authRequired, isAdmin, updateEvent);
+router.delete("/deleteEvent/:id", authRequired, isAdmin, deleteEvent);
 
 //pruebas
 if (process.env.NODE_ENV === "test") {
