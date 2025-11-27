@@ -29,7 +29,6 @@ function AppContent() {
           {/* Para usuarios Registrados (SOLO ACCESIBLES CON AUTENTICACION) */}
           <Route path="/dashboard" element={<DashboardPage />}/>
 
-
         </Routes>
         <FooterComponent />
       </main>
