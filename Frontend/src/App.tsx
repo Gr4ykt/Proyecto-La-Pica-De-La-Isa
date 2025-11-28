@@ -9,6 +9,10 @@ import ContactPage from './pages/Contact.tsx'
 import LoginRegisterPage from './pages/LoginRegister.tsx'
 import ServicesPage from './pages/Services.tsx'
 import DashboardPage from './pages/Dashboard.tsx'
+import NotFoundPage from './pages/Page404.tsx'
+
+import { AuthProvider } from './context/authContext.tsx'
+import ProtectedRoute from './ProtectedRoute.tsx'
 
 function AppContent() {
 
@@ -26,9 +30,19 @@ function AppContent() {
           <Route path="/login" element={< LoginRegisterPage/>} />
           <Route path="/services" element={< ServicesPage/>} />
 
-          {/* Para usuarios Registrados (SOLO ACCESIBLES CON AUTENTICACION) */}
-          <Route path="/dashboard" element={<DashboardPage />}/>
+          {/* Rutas protegidas - Solo accesibles con autenticación */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
+
+          {/* RUTA 404 */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <FooterComponent />
       </main>
@@ -38,7 +52,9 @@ function AppContent() {
 
 function App() {
   return (
-    <AppContent />
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 

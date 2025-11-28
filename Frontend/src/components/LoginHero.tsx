@@ -1,20 +1,78 @@
-import { useState } from 'react';
+import { useState, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react';
+import { useAuth } from '../context/authContext';
+import { useNavigate } from 'react-router';
 
 function LoginHero() {
     const [isLogin, setIsLogin] = useState(true);
+    const { signup, signin, errors } = useAuth();
+    const navigate = useNavigate();
+
+    // Estados para el formulario de login
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: ''
+    });
+
+    // Estados para el formulario de registro
+    const [registerData, setRegisterData] = useState({
+        name: '',
+        lastname: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
 
     const handleGoogleAuth = () => {
-        console.log('Autenticación con Google');
-        // Aquí irá la lógica de autenticación con Google
+        window.location.href = 'http://localhost:3000/user/api/google';
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(isLogin ? 'Iniciando sesión...' : 'Registrando usuario...');
-        // Aquí irá la lógica de envío del formulario
+        try {
+            await signin(loginData);
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('Error en login:', error);
+        }
     };
+
+    const handleRegisterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        // Validar que las contraseñas coincidan
+        if (registerData.password !== registerData.confirmPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
+        try {
+            const { confirmPassword, ...dataToSend } = registerData;
+            await signup(dataToSend);
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('Error en registro:', error);
+        }
+    };
+
     return (
         <div className="w-full max-w-5xl">
+        {/* Mostrar errores si existen */}
+        {errors.length > 0 && (
+            <div 
+                className="mb-4 p-4 rounded-lg"
+                style={{ 
+                    backgroundColor: '#fee',
+                    color: '#c00',
+                    border: '1px solid #fcc'
+                }}
+            >
+                {errors.map((error: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined, index: Key | null | undefined) => (
+                    <p key={index} className="text-sm">{error}</p>
+                ))}
+            </div>
+        )}
+
         {/* Contenedor principal con dos columnas */}
         <div className="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-2xl">
           
@@ -55,7 +113,7 @@ function LoginHero() {
 
             {/* Formulario de Login */}
             {isLogin && (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleLoginSubmit} className="space-y-5">
                 <div>
                   <label 
                     htmlFor="login-email"
@@ -68,6 +126,8 @@ function LoginHero() {
                     type="email"
                     id="login-email"
                     required
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({...loginData, email: e.target.value})}
                     className="w-full px-4 py-3 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm sm:text-base"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -90,6 +150,8 @@ function LoginHero() {
                     type="password"
                     id="login-password"
                     required
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({...loginData, password: e.target.value})}
                     className="w-full px-4 py-3 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm sm:text-base"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -157,7 +219,7 @@ function LoginHero() {
 
             {/* Formulario de Registro */}
             {!isLogin && (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label 
@@ -171,6 +233,8 @@ function LoginHero() {
                       type="text"
                       id="register-nombre"
                       required
+                      value={registerData.name}
+                      onChange={(e) => setRegisterData({...registerData, name: e.target.value})}
                       className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                       style={{ 
                         backgroundColor: 'var(--background)',
@@ -193,6 +257,8 @@ function LoginHero() {
                       type="text"
                       id="register-apellido"
                       required
+                      value={registerData.lastname}
+                      onChange={(e) => setRegisterData({...registerData, lastname: e.target.value})}
                       className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                       style={{ 
                         backgroundColor: 'var(--background)',
@@ -216,6 +282,8 @@ function LoginHero() {
                     type="text"
                     id="register-username"
                     required
+                    value={registerData.username}
+                    onChange={(e) => setRegisterData({...registerData, username: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -238,6 +306,8 @@ function LoginHero() {
                     type="email"
                     id="register-email"
                     required
+                    value={registerData.email}
+                    onChange={(e) => setRegisterData({...registerData, email: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -260,6 +330,8 @@ function LoginHero() {
                     type="password"
                     id="register-password"
                     required
+                    value={registerData.password}
+                    onChange={(e) => setRegisterData({...registerData, password: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -282,6 +354,8 @@ function LoginHero() {
                     type="password"
                     id="register-password-confirm"
                     required
+                    value={registerData.confirmPassword}
+                    onChange={(e) => setRegisterData({...registerData, confirmPassword: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm"
                     style={{ 
                       backgroundColor: 'var(--background)',
@@ -350,7 +424,7 @@ function LoginHero() {
           <div 
             className="hidden md:block relative overflow-hidden"
             style={{
-              backgroundImage: 'url(https://images.unsplash.com/photo-1519167758481-83f29da8c313?w=800)',
+              backgroundImage: '',
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
