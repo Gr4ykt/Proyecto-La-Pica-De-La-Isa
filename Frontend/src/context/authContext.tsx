@@ -15,7 +15,6 @@ interface User {
   email: string;
   role: string;
   googleId?: string;
-  avatar?: string;
   createdAt: string;
   updatedAt: string;
 }

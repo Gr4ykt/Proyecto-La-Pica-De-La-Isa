@@ -1,9 +1,12 @@
 "use client";
 import { useState } from 'react';
+import { useAuth } from '../context/authContext';
 import ThemeToggle from '../components/ThemeToggle';
+import Logo from '/Images/Icon.png'
 
 export default function HeaderComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,9 +23,10 @@ export default function HeaderComponent() {
       >
         {/* Top Bar - Logo o titulo */}
         <div className="border-b-2 p-4 sm:p-6" style={{ borderColor: 'var(--border)' }}>
-          <div className="max-w-6xl mx-auto flex justify-between items-center gap-4">
+          <div className="max-w-6xl mx-auto flex gap-4">
+          <img src={Logo} alt="Logo" className="h-8 sm:h-10 md:h-12" />
             <h1 
-              className="text-xl sm:text-2xl md:text-3xl font-bold"
+              className="pt-1 text-xl sm:text-2xl md:text-3xl font-bold"
               style={{ color: 'var(--text-primary)' }}
             >
               La pica de la Isa
@@ -80,15 +84,6 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="/services"
-                  className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
-                  style={{ color: 'var(--link-default)' }}
-                >
-                  Servicios
-                </a>
-              </li>
-              <li>
-                <a 
                   href="/galery"
                   className="font-medium transition-all duration-300 hover:translate-y-[-2px]"
                   style={{ color: 'var(--link-default)' }}
@@ -106,13 +101,22 @@ export default function HeaderComponent() {
                 </a>
               </li>
               <li className="ml-auto flex items-center gap-3">
-                <a href="/login">
-                <button 
-                  className="btn-primary btn-sm"
-                >
-                  Iniciar Sesión
-                </button>
-                </a>
+                {isAuthenticated ? (
+                  <a href="/dashboard">
+                    <button className="btn-primary btn-sm flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Mi Perfil
+                    </button>
+                  </a>
+                ) : (
+                  <a href="/login">
+                    <button className="btn-primary btn-sm">
+                      Iniciar Sesión
+                    </button>
+                  </a>
+                )}
               </li>
               <ThemeToggle />
             </ul>
@@ -129,7 +133,7 @@ export default function HeaderComponent() {
             <ul className="space-y-1">
               <li>
                 <a 
-                  href="#inicio"
+                  href="/"
                   onClick={() => setIsMenuOpen(false)}
                   className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
                   style={{ 
@@ -149,26 +153,6 @@ export default function HeaderComponent() {
               </li>
               <li>
                 <a 
-                  href="#servicios"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
-                  style={{ 
-                    color: 'var(--text-primary)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--btn-secondary-bg)';
-                    e.currentTarget.style.color = 'var(--btn-secondary-text)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--text-primary)';
-                  }}
-                >
-                  Servicios
-                </a>
-              </li>
-              <li>
-                <a 
                   href="/galery"
                   onClick={() => setIsMenuOpen(false)}
                   className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
@@ -185,26 +169,6 @@ export default function HeaderComponent() {
                   }}
                 >
                   Galería
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#reservas"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block py-3 px-4 rounded-lg font-medium transition-all duration-300"
-                  style={{ 
-                    color: 'var(--text-primary)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--btn-secondary-bg)';
-                    e.currentTarget.style.color = 'var(--btn-secondary-text)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--text-primary)';
-                  }}
-                >
-                  Reservas
                 </a>
               </li>
               <li>
@@ -228,13 +192,28 @@ export default function HeaderComponent() {
                 </a>
               </li>
               <li className="pt-2 flex items-center gap-3">
-                
-                <button 
-                  className="btn-primary flex-1"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Iniciar Sesión
-                </button>
+                {isAuthenticated ? (
+                  <a href="/dashboard" className="flex-1">
+                    <button 
+                      className="btn-primary w-full flex items-center justify-center gap-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Mi Perfil
+                    </button>
+                  </a>
+                ) : (
+                  <a href="/login" className="flex-1">
+                    <button 
+                      className="btn-primary w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Iniciar Sesión
+                    </button>
+                  </a>
+                )}
                 <ThemeToggle />
               </li>
             </ul>
