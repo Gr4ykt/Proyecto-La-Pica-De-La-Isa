@@ -82,9 +82,13 @@ export const verifyToken = async (req, res) => {
         if(!userFound) return res.status(401).json({message: 'Unauthorized'});
 
         return res.json({
-            id: userFound._id,
+            id: userFound.id,
             username: userFound.username,
-            email: userFound.email
+            name: userFound.name,
+            lastname: userFound.lastname,
+            email: userFound.email,
+            role: userFound.role,
+            created: userFound.createdAt
         });
     })
 }

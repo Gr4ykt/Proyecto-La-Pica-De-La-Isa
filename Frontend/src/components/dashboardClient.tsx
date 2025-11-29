@@ -381,7 +381,7 @@ function DashboardClient() {
   const getInitials = () => {
     const firstName = user.name || user.username;
     const lastName = user.lastname || '';
-    const firstInitial = firstName.charAt(0);
+    const firstInitial = firstName ? firstName.charAt(0) : '';
     const lastInitial = lastName ? lastName.charAt(0) : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   };

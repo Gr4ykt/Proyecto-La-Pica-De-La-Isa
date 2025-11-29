@@ -8,11 +8,12 @@ import {
 } from '../api/auth';
 
 interface User {
+  avatar: string | undefined;
   _id: string;
-  username: string;
+  username?: string;
   name?: string;
   lastname?: string;
-  email: string;
+  email?: string;
   role: string;
   googleId?: string;
   createdAt: string;

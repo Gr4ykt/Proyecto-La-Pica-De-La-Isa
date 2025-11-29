@@ -12,6 +12,7 @@ import NotFoundPage from './pages/Page404.tsx'
 import { AuthProvider } from './context/authContext.tsx'
 import { EventProvider } from './context/eventContext.tsx'
 import ProtectedRoute from './ProtectedRoute.tsx'
+import { AdminEventProvider } from './context/adminContext.tsx'
 
 function AppContent() {
   const location = useLocation()
@@ -60,9 +61,11 @@ function App() {
   return (
     <AuthProvider>
       <EventProvider>
+        <AdminEventProvider>
         <BrowserRouter>
           <AppContent />
         </BrowserRouter>
+        </AdminEventProvider>
       </EventProvider>
     </AuthProvider>
   )

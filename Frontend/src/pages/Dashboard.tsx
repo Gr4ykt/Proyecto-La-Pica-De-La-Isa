@@ -34,10 +34,9 @@ function DashboardPage() {
   // Renderizar dashboard según el rol
   if (user.role === 'Administrator') {
     return <DashboardAdmin />;
+  }else{
+    return <DashboardClient />;
   }
-
-  // Por defecto, mostrar dashboard de cliente
-  return <DashboardClient />;
 }
 
 export default DashboardPage;
