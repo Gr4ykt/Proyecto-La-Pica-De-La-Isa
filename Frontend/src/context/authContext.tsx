@@ -4,7 +4,8 @@ import {
   loginRequest, 
   logoutRequest, 
   profileRequest, 
-  verifyTokenRequest 
+  verifyTokenRequest,
+  updateProfileRequest
 } from '../api/auth';
 
 interface User {
@@ -34,6 +35,13 @@ interface LoginData {
   password: string;
 }
 
+interface UpdateUser {
+  username?: string;
+  name?: string;
+  lastname?: string;
+  email?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -43,6 +51,7 @@ interface AuthContextType {
   signin: (data: LoginData) => Promise<void>;
   logout: () => Promise<void>;
   getProfile: () => Promise<void>;
+  updateUser: (id: string, data: UpdateUser) => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,17 +70,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
 
-  // Limpiar errores después de 5 segundos
   useEffect(() => {
     if (errors.length > 0) {
-      const timer = setTimeout(() => {
-        setErrors([]);
-      }, 5000);
+      const timer = setTimeout(() => setErrors([]), 5000);
       return () => clearTimeout(timer);
     }
   }, [errors]);
 
-  // Verificar token al cargar la aplicación
   useEffect(() => {
     const checkLogin = async () => {
       try {
@@ -80,9 +85,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(res.data);
           setIsAuthenticated(true);
         }
-      } catch (error) {
-        setIsAuthenticated(false);
+      } catch {
         setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }
@@ -97,13 +102,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (error: any) {
-      if (error.response?.data?.message) {
-        setErrors(Array.isArray(error.response.data.message) 
-          ? error.response.data.message 
-          : [error.response.data.message]);
-      } else {
-        setErrors(['Error al registrar usuario']);
-      }
+      const message = error?.response?.data?.message ?? error?.message ?? 'Error al registrar usuario';
+      setErrors(Array.isArray(message) ? message : [message]);
       throw error;
     }
   };
@@ -115,13 +115,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (error: any) {
-      if (error.response?.data?.message) {
-        setErrors(Array.isArray(error.response.data.message) 
-          ? error.response.data.message 
-          : [error.response.data.message]);
-      } else {
-        setErrors(['Error al iniciar sesión']);
-      }
+      const message = error?.response?.data?.message ?? error?.message ?? 'Error al iniciar sesión';
+      setErrors(Array.isArray(message) ? message : [message]);
       throw error;
     }
   };
@@ -133,6 +128,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
+    }
+  };
+
+  // ---- updateUser corregido ----
+  const updateUser = async (id: string, data: UpdateUser): Promise<User | null> => {
+    try {
+      if (!id) throw new Error('Falta el id del usuario');
+
+      const res = await updateProfileRequest(id, data);
+
+      // si la API devuelve el usuario actualizado en res.data, lo seteamos
+      if (res?.data) {
+        setUser(res.data);
+        return res.data;
+      }
+
+      return null;
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? err?.message ?? 'Error al actualizar usuario';
+      // opcional: guardar en errores del contexto
+      setErrors(prev => (message ? [...prev, message] : prev));
+      throw new Error(message);
     }
   };
 
@@ -156,6 +173,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signin,
         logout,
         getProfile,
+        updateUser,
       }}
     >
       {children}

@@ -43,6 +43,10 @@ interface UpdateEventData {
   secondPay?: boolean;
 }
 
+interface DeleteEvent {
+  isDeleted: boolean;
+}
+
 interface EventContextType {
   events: Event[];
   currentEvent: Event | null;
@@ -50,7 +54,7 @@ interface EventContextType {
   errors: string[];
   createEvent: (data: CreateEventData) => Promise<Event | null>;
   updateEvent: (id: string, data: UpdateEventData) => Promise<Event | null>;
-  deleteEvent: (id: string) => Promise<boolean>;
+  deleteEvent: (id: string, data: DeleteEvent) => Promise<boolean>;
   getEvents: () => Promise<void>;
   getEvent: (id: string) => Promise<void>;
   clearErrors: () => void;

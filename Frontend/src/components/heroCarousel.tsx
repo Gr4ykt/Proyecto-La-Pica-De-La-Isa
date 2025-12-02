@@ -77,13 +77,13 @@ export default function HeroCarousel() {
         <div className="text-center px-4 sm:px-6 max-w-4xl">
           <h1 
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 transition-all duration-500"
-            style={{ color: 'var(--background)' }}
+            style={{ color: '#F5F1E8' }}
           >
             {slides[currentSlide].title}
           </h1>
           <p 
             className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 opacity-90"
-            style={{ color: 'var(--background)' }}
+            style={{ color: '#F5F1E8' }}
           >
             {slides[currentSlide].subtitle}
           </p>
