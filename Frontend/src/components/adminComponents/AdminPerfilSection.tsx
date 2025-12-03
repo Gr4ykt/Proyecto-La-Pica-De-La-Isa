@@ -49,28 +49,28 @@ function AdminPerfilSection() {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block mb-2 font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Nombre</label>
-              <input type="text" defaultValue={user.name || ''} className="w-full px-4 py-2.5 rounded-lg border text-sm" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+              <input type="text" defaultValue={user.name || ''} disabled className="w-full px-4 py-2.5 rounded-lg border text-sm opacity-60" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
             </div>
             <div>
               <label className="block mb-2 font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Apellido</label>
-              <input type="text" defaultValue={user.lastname || ''} className="w-full px-4 py-2.5 rounded-lg border text-sm" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+              <input type="text" defaultValue={user.lastname || ''} disabled className="w-full px-4 py-2.5 rounded-lg border text-sm opacity-60" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
             </div>
           </div>
           <div>
             <label className="block mb-2 font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Username</label>
-            <input type="text" defaultValue={user.username} className="w-full px-4 py-2.5 rounded-lg border text-sm" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+            <input type="text" defaultValue={user.username} disabled className="w-full px-4 py-2.5 rounded-lg border text-sm opacity-60" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
           </div>
           <div>
             <label className="block mb-2 font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Email</label>
-            <input type="email" defaultValue={user.email} className="w-full px-4 py-2.5 rounded-lg border text-sm" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
+            <input type="email" defaultValue={user.email} disabled className="w-full px-4 py-2.5 rounded-lg border text-sm opacity-60" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
           </div>
           <div>
             <label className="block mb-2 font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Rol</label>
             <input type="text" value={user.role} disabled className="w-full px-4 py-2.5 rounded-lg border text-sm opacity-60" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }} />
           </div>
           <div className="pt-4 flex flex-col sm:flex-row gap-3">
-            <button type="submit" className="btn-primary flex-1">Guardar Cambios</button>
-            <button type="button" className="btn-outline flex-1">Cancelar</button>
+            <button type="submit" disabled className="btn-primary flex-1">Guardar Cambios</button>
+            <button type="button" disabled className="btn-outline flex-1">Cancelar</button>
           </div>
         </form>
       </div>

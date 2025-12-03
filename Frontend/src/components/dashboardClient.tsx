@@ -13,13 +13,17 @@ function DashboardClient() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { user, logout } = useAuth();
+  const { user, logout, getProfile } = useAuth();
   const { getEvents } = useEvent();
   const navigate = useNavigate();
 
-  // Cargar eventos al montar el componente
+  // Cargar perfil de usuario y eventos al montar el componente
   useEffect(() => {
-    getEvents();
+    const loadData = async () => {
+      await getProfile(); // Cargar perfil del usuario
+      getEvents(); // Cargar eventos
+    };
+    loadData();
   }, []);
 
   const handleOpenModal = (event: any) => {

@@ -1,23 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/authContext';
 
 function ClientPerfilSection() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, getProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  if (!user) return null;
+  // Cargar el perfil al montar el componente para asegurar que tenemos el user._id
+  useEffect(() => {
+    const userId = user?._id || user?.id;
+    
+    if (!userId) {
+      console.log('ClientPerfilSection - No hay ID, cargando perfil...');
+      getProfile();
+    }
+  }, []);
+
+  if (!user) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 mx-auto mb-4" style={{ borderColor: 'var(--primary)' }} />
+        <p style={{ color: 'var(--text-secondary)' }}>Cargando perfil...</p>
+      </div>
+    );
+  }
 
   // Obtener iniciales
   const getInitials = () => {
     const firstName = user.name || user.username || '';
     const lastName = user.lastname || '';
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || '?';
+    const firstInitial = firstName ? firstName.charAt(0) : '';
+    const lastInitial = lastName ? lastName.charAt(0) : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase() || '?';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validar que tengamos el ID del usuario (soporta tanto _id como id)
+    const userId = user?._id || user?.id;
+    
+    if (!userId) {
+      setErrorMsg("Error: No se puede identificar al usuario. Intenta recargar la página.");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
@@ -32,12 +60,22 @@ function ClientPerfilSection() {
       email: formData.get("email") as string,
     };
 
+    console.log('Datos a enviar:', data);
+    console.log('ID del usuario:', userId);
+
     try {
-      // ← PASAMOS EL user._id al llamar updateUser
-      await updateUser(user._id, data);
-      setSuccessMsg("Datos actualizados correctamente ✔️");
+      const result = await updateUser(userId, data);
+      
+      if (result) {
+        setSuccessMsg("✔️ Perfil actualizado correctamente");
+        // Recargar el perfil para asegurar que tenemos los datos más recientes
+        await getProfile();
+      } else {
+        setErrorMsg("No se pudo actualizar el perfil");
+      }
     } catch (err: any) {
-      setErrorMsg(err.message || "Error al actualizar");
+      console.error('Error al actualizar:', err);
+      setErrorMsg(err.message || "Error al actualizar el perfil");
     } finally {
       setLoading(false);
       setTimeout(() => {
@@ -53,6 +91,9 @@ function ClientPerfilSection() {
         <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
           Mi Perfil
         </h2>
+        <p className="text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>
+          Actualiza tu información personal
+        </p>
       </div>
 
       <div className="p-6 sm:p-8 rounded-xl" style={{ backgroundColor: 'var(--primary)' }}>
@@ -78,6 +119,9 @@ function ClientPerfilSection() {
             <p className="text-sm opacity-90 mb-3" style={{ color: 'var(--background)' }}>
               @{user.username}
             </p>
+            <p className="text-xs opacity-75" style={{ color: 'var(--background)' }}>
+              {user.email}
+            </p>
           </div>
         </div>
       </div>
@@ -92,13 +136,13 @@ function ClientPerfilSection() {
 
         {/* Mensajes */}
         {successMsg && (
-          <div className="p-3 rounded-lg text-green-700 bg-green-100 border border-green-300 text-sm">
+          <div className="mb-4 p-4 rounded-lg text-sm font-medium" style={{ backgroundColor: 'rgba(122, 155, 126, 0.2)', color: 'var(--secondary)' }}>
             {successMsg}
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-3 rounded-lg text-red-700 bg-red-100 border border-red-300 text-sm">
+          <div className="mb-4 p-4 rounded-lg text-sm font-medium" style={{ backgroundColor: 'rgba(220, 38, 38, 0.2)', color: '#DC2626' }}>
             {errorMsg}
           </div>
         )}
@@ -112,9 +156,15 @@ function ClientPerfilSection() {
               <input
                 name="name"
                 type="text"
+                key={`name-${user._id || user.id}`}
                 defaultValue={user.name || ''}
-                className="w-full px-4 py-2.5 rounded-lg border text-sm"
-                style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+                className="w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2"
+                style={{ 
+                  backgroundColor: 'var(--background)', 
+                  borderColor: 'var(--border)', 
+                  color: 'var(--text-primary)',
+                }}
+                placeholder="Ingresa tu nombre"
               />
             </div>
             <div>
@@ -124,9 +174,15 @@ function ClientPerfilSection() {
               <input
                 name="lastname"
                 type="text"
+                key={`lastname-${user._id || user.id}`}
                 defaultValue={user.lastname || ''}
-                className="w-full px-4 py-2.5 rounded-lg border text-sm"
-                style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+                className="w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2"
+                style={{ 
+                  backgroundColor: 'var(--background)', 
+                  borderColor: 'var(--border)', 
+                  color: 'var(--text-primary)',
+                }}
+                placeholder="Ingresa tu apellido"
               />
             </div>
           </div>
@@ -138,9 +194,16 @@ function ClientPerfilSection() {
             <input
               name="username"
               type="text"
+              key={`username-${user._id || user.id}`}
               defaultValue={user.username}
-              className="w-full px-4 py-2.5 rounded-lg border text-sm"
-              style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+              required
+              className="w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2"
+              style={{ 
+                backgroundColor: 'var(--background)', 
+                borderColor: 'var(--border)', 
+                color: 'var(--text-primary)',
+              }}
+              placeholder="Ingresa tu username"
             />
           </div>
 
@@ -151,18 +214,38 @@ function ClientPerfilSection() {
             <input
               name="email"
               type="email"
+              key={`email-${user._id || user.id}`}
               defaultValue={user.email}
-              className="w-full px-4 py-2.5 rounded-lg border text-sm"
-              style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+              required
+              className="w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2"
+              style={{ 
+                backgroundColor: 'var(--background)', 
+                borderColor: 'var(--border)', 
+                color: 'var(--text-primary)',
+              }}
+              placeholder="Ingresa tu email"
             />
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-3">
-            <button type="submit" className="btn-primary flex-1" disabled={loading}>
+            <button 
+              type="submit" 
+              className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed" 
+              disabled={loading}
+            >
               {loading ? "Guardando..." : "Guardar Cambios"}
             </button>
 
-            <button type="button" className="btn-outline flex-1" onClick={() => window.location.reload()}>
+            <button 
+              type="button" 
+              className="btn-outline flex-1" 
+              onClick={() => {
+                setSuccessMsg("");
+                setErrorMsg("");
+                window.location.reload();
+              }}
+              disabled={loading}
+            >
               Cancelar
             </button>
           </div>

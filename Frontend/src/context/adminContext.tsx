@@ -5,6 +5,7 @@ import {
   getEventAdmin as getEventAdminApi,
   getEventsAdmin as getEventsAdminApi
 } from '../api/eventAdmin';
+import { getUsersRequestAdmin } from '../api/auth';
 
 export const EVENT_STATUSES = [
   "init", "inProgress", "accepted", "firstPay", "completed", "cancelled", "archived"
@@ -33,6 +34,17 @@ interface Event {
   updatedAt: string;
 }
 
+interface User {
+  _id: string;
+  username: string;
+  name?: string;
+  lastname?: string;
+  email: string;
+  role?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 interface UpdateEventData {
   title?: string;
   note?: string;
@@ -46,12 +58,14 @@ interface UpdateEventData {
 interface AdminEventContextType {
   events: Event[];
   currentEvent: Event | null;
+  users: User[];
   isLoading: boolean;
   errors: string[];
   updateEvent: (id: string, data: UpdateEventData) => Promise<Event | null>;
   deleteEvent: (id: string) => Promise<boolean>;
   getEvents: () => Promise<void>;
   getEvent: (id: string) => Promise<void>;
+  getUsers: () => Promise<void>;
   clearErrors: () => void;
 }
 
@@ -68,6 +82,7 @@ export const useAdminEvent = () => {
 export const AdminEventProvider = ({ children }: { children: React.ReactNode }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -171,17 +186,38 @@ export const AdminEventProvider = ({ children }: { children: React.ReactNode }) 
     }
   };
 
+  const getUsers = async () => {
+    try {
+      setErrors([]);
+      setIsLoading(true);
+      const res = await getUsersRequestAdmin();
+      setUsers(res.data);
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        setErrors(Array.isArray(error.response.data.message) 
+          ? error.response.data.message 
+          : [error.response.data.message]);
+      } else {
+        setErrors(['Error al obtener los usuarios']);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AdminEventContext.Provider
       value={{
         events,
         currentEvent,
+        users,
         isLoading,
         errors,
         updateEvent,
         deleteEvent,
         getEvents,
         getEvent,
+        getUsers,
         clearErrors,
       }}
     >

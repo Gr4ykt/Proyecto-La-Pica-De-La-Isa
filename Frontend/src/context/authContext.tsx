@@ -9,12 +9,13 @@ import {
 } from '../api/auth';
 
 interface User {
-  avatar: string | undefined;
-  _id: string;
-  username?: string;
+  avatar?: string;
+  _id?: string;
+  id?: string;
+  username: string;
   name?: string;
   lastname?: string;
-  email?: string;
+  email: string;
   role: string;
   googleId?: string;
   createdAt: string;
@@ -52,6 +53,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   getProfile: () => Promise<void>;
   updateUser: (id: string, data: UpdateUser) => Promise<User | null>;
+  clearErrors: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,6 +72,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
 
+  const clearErrors = () => setErrors([]);
+
+  // Helper para obtener el ID del usuario (maneja tanto _id como id)
+  const getUserId = (user: User | null): string | undefined => {
+    return user?._id || user?.id;
+  };
+
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => setErrors([]), 5000);
@@ -82,7 +91,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const res = await verifyTokenRequest();
         if (res.data) {
-          setUser(res.data);
+          // Normalizar: si viene 'id', copiarlo a '_id' también
+          const userData = res.data;
+          if (userData.id && !userData._id) {
+            userData._id = userData.id;
+          }
+          
+          setUser(userData);
           setIsAuthenticated(true);
         }
       } catch {
@@ -99,7 +114,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setErrors([]);
       const res = await registerRequest(data);
-      setUser(res.data);
+      
+      // Normalizar: si viene 'id', copiarlo a '_id' también
+      const userData = res.data;
+      if (userData.id && !userData._id) {
+        userData._id = userData.id;
+      }
+      
+      setUser(userData);
       setIsAuthenticated(true);
     } catch (error: any) {
       const message = error?.response?.data?.message ?? error?.message ?? 'Error al registrar usuario';
@@ -112,7 +134,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setErrors([]);
       const res = await loginRequest(data);
-      setUser(res.data);
+      
+      // Normalizar: si viene 'id', copiarlo a '_id' también
+      const userData = res.data;
+      if (userData.id && !userData._id) {
+        userData._id = userData.id;
+      }
+      
+      setUser(userData);
       setIsAuthenticated(true);
     } catch (error: any) {
       const message = error?.response?.data?.message ?? error?.message ?? 'Error al iniciar sesión';
@@ -131,34 +160,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // ---- updateUser corregido ----
   const updateUser = async (id: string, data: UpdateUser): Promise<User | null> => {
     try {
-      if (!id) throw new Error('Falta el id del usuario');
+      setErrors([]);
+      
+      if (!id) {
+        throw new Error('ID de usuario requerido');
+      }
 
       const res = await updateProfileRequest(id, data);
 
-      // si la API devuelve el usuario actualizado en res.data, lo seteamos
+      // Actualizar el estado del usuario con los datos nuevos
       if (res?.data) {
-        setUser(res.data);
-        return res.data;
+        // Normalizar: si viene 'id', copiarlo a '_id' también
+        const userData = res.data;
+        if (userData.id && !userData._id) {
+          userData._id = userData.id;
+        }
+        
+        setUser(userData);
+        return userData;
       }
 
       return null;
-    } catch (err: any) {
-      const message = err?.response?.data?.message ?? err?.message ?? 'Error al actualizar usuario';
-      // opcional: guardar en errores del contexto
-      setErrors(prev => (message ? [...prev, message] : prev));
-      throw new Error(message);
+    } catch (error: any) {
+      console.error('updateUser - Error capturado:', error);
+      console.error('updateUser - Error response:', error?.response?.data);
+      const message = error?.response?.data?.message ?? error?.message ?? 'Error al actualizar perfil';
+      const errorArray = Array.isArray(message) ? message : [message];
+      setErrors(errorArray);
+      throw new Error(errorArray[0]);
     }
   };
 
   const getProfile = async () => {
     try {
       const res = await profileRequest();
-      setUser(res.data);
+      
+      if (res?.data) {
+        // Normalizar: si viene 'id', copiarlo a '_id' también
+        const userData = res.data;
+        if (userData.id && !userData._id) {
+          userData._id = userData.id;
+        }
+        setUser(userData);
+      } else {
+        console.warn('getProfile - No se recibió data en la respuesta');
+      }
     } catch (error) {
-      console.error('Error al obtener perfil:', error);
+      console.error('getProfile - Error al obtener perfil:', error);
     }
   };
 
@@ -174,6 +224,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         getProfile,
         updateUser,
+        clearErrors,
       }}
     >
       {children}
