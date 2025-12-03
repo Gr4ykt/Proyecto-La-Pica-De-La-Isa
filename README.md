@@ -141,6 +141,8 @@ Este proyecto es parte de un proyecto integrativo empresarial.
 ## 👥 Autores
 
 - **Gr4ykt** - [GitHub](https://github.com/Gr4ykt)
+- **Zarina-177** - [GitHub](https://github.com/Zarina-177)
+
 
 ## 📞 Contacto
 
